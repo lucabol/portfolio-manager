@@ -114,6 +114,10 @@ def get_stock_info(ticker):
                 price = float(price)
             except (ValueError, TypeError):
                 price = 'N/A'
+        
+        # Return None if we couldn't get a valid price
+        if price == 'N/A':
+            return None
                 
         data = {
             'price': price,
@@ -125,12 +129,7 @@ def get_stock_info(ticker):
         return data
     except Exception as e:
         print(f"Error getting stock info for {ticker}: {e}")
-        data = {
-            'price': 'N/A',
-            'dividend_yield': 0
-        }
-        market_data_cache[ticker] = (data, current_time)
-        return data
+        return None
 
 def get_cached_portfolio(user_email):
     """Get cached portfolio or read from drive if cache expired"""
@@ -338,6 +337,11 @@ def logout():
 def add_position():
     ticker = request.form.get('ticker').upper()
     new_quantity = float(request.form.get('quantity'))
+    
+    # Verify ticker exists by checking if we can get market data
+    market_data = get_stock_info(ticker)
+    if market_data is None:
+        return 'Ticker not found', 400
     
     portfolio = get_cached_portfolio(session['user']['email'])
     

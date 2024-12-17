@@ -8,6 +8,7 @@
               hx-target="#portfolio-table tbody"
               hx-swap="innerHTML"
               hx-on::after-request="this.reset()"
+              hx-on::error="showError('Ticker not found')"
               hx-indicator="#spinner"
               class="mb-4">
             <div class="input-group mb-3" style="width: auto;">
@@ -16,8 +17,14 @@
                            onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); }">
                 </div>
                 <div class="col-auto">
-                    <input type="number" name="quantity" class="form-control" placeholder="Quantity" style="width: 100px;" required
-                           onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); }">
+                    <input type="number" 
+                           name="quantity" 
+                           class="form-control" 
+                           placeholder="Quantity" 
+                           style="width: 100px;" 
+                           required
+                           step="any"
+                           onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); } else if(!/^[-0-9.]$/.test(event.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(event.key)) { event.preventDefault(); }">
                 </div>
                 <button type="submit" class="btn btn-outline-primary">
                     <i class="fas fa-plus"></i>
