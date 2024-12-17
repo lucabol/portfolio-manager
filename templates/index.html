@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Portfolio for {{ session['user']['email'] }}</h2>
+        <form hx-post="/add" 
+              hx-target="#portfolio-table tbody"
+              hx-swap="innerHTML"
+              hx-on::after-request="this.reset()"
+              hx-indicator="#spinner"
+              class="mb-4">
+            <div class="input-group mb-3" style="width: auto;">
+                <div class="col-auto">
+                    <input type="text" name="ticker" class="form-control" placeholder="Ticker" style="width: 100px;" required
+                           onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); }">
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="quantity" class="form-control" placeholder="Quantity" style="width: 100px;" required
+                           onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); }">
+                </div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-plus"></i>
+                    <span class="spinner htmx-indicator" id="spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <table id="portfolio-table" class="table">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Dividend Yield</th>
+                    <th>Total Value</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in portfolio %}
+                    {% include 'portfolio_row.html' %}
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end"><strong>Portfolio Total:</strong></td>
+                    <td>
+                        ${{ (portfolio|portfolio_total)|number_format }}
+                    </td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,9 @@
+Flask==3.0.2
+requests==2.31.0
+oauthlib==3.2.2
+pyOpenSSL==24.0.0
+Flask-Login==0.6.3
+google-auth-oauthlib==1.2.0
+google-api-python-client==2.118.0
+yfinance==0.2.37
+python-dotenv==1.0.0 

@@ -1,0 +1,56 @@
+<tr data-ticker="{{ position.ticker }}">
+    <td>{{ position.ticker }}</td>
+    <td>
+        <span class="quantity-display">{{ position.quantity }}</span>
+        <form class="edit-form" style="display: none;"
+              hx-put="/edit/{{ position.ticker }}"
+              hx-target="previous .quantity-display"
+              hx-swap="innerHTML">
+            <input type="number" name="quantity" value="{{ position.quantity }}" class="form-control form-control-sm">
+        </form>
+    </td>
+    <td>{% if position.price != 'N/A' %}${{ position.price|number_format(show_decimals=True) }}{% else %}N/A{% endif %}</td>
+    <td>{% if position.dividend_yield %}{{ "%.2f"|format(position.dividend_yield * 100) }}{% else %}0.00{% endif %}%</td>
+    <td class="total-value">{% if position.total_value != 'N/A' %}${{ position.total_value|number_format }}{% else %}N/A{% endif %}</td>
+    <td>
+        <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-outline-secondary edit-btn"
+                    onclick="toggleEdit(this)">
+                <i class="fas fa-edit"></i>
+                <span class="spinner htmx-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                    hx-delete="/delete/{{ position.ticker }}"
+                    hx-target="closest tr"
+                    hx-indicator="this"
+                    hx-swap="outerHTML">
+                <i class="fas fa-trash"></i>
+                <span class="spinner htmx-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </button>
+        </div>
+    </td>
+</tr>
+
+<script>
+function toggleEdit(btn) {
+    const row = btn.closest('tr');
+    const display = row.querySelector('.quantity-display');
+    const form = row.querySelector('.edit-form');
+    
+    if (form.style.display === 'none') {
+        display.style.display = 'none';
+        form.style.display = 'block';
+        btn.textContent = 'Save';
+        form.querySelector('input').focus();
+    } else {
+        form.dispatchEvent(new Event('submit'));
+        display.style.display = 'block';
+        form.style.display = 'none';
+        btn.textContent = 'Edit';
+    }
+}
+</script> 
