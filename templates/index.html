@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-8">
-        <h2>Portfolio for {{ session['user']['email'] }}</h2>
+        <h2>My Portfolio</h2>
         <form hx-post="/add" 
               hx-target="#portfolio-table tbody"
               hx-swap="innerHTML"
@@ -20,8 +20,8 @@
                     <input type="number" 
                            name="quantity" 
                            class="form-control" 
-                           placeholder="Quantity" 
-                           style="width: 100px;" 
+                           placeholder="Shares" 
+                           style="width: 120px;" 
                            required
                            step="any"
                            onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.form.requestSubmit(); } else if(!/^[-0-9.]$/.test(event.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(event.key)) { event.preventDefault(); }">
@@ -39,10 +39,10 @@
             <thead>
                 <tr>
                     <th>Ticker</th>
-                    <th>Quantity</th>
+                    <th>Shares</th>
                     <th>Price</th>
-                    <th>Dividend Yield</th>
-                    <th>Total Value</th>
+                    <th>Yield</th>
+                    <th>Value</th>
                     <th>Actions</th>
                 </tr>
             </thead>

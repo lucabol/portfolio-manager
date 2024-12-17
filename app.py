@@ -22,6 +22,8 @@ import yfinance as yf
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from time import time
+from google.oauth2.credentials import Credentials
+import requests as http_requests  # Rename to avoid conflict
 
 app = Flask(__name__)
 # Configure from environment variables
@@ -329,8 +331,23 @@ def oauth2callback():
 
 @app.route('/logout')
 def logout():
+    # Revoke Google OAuth token if it exists
+    if 'credentials' in session:
+        credentials = Credentials(**session['credentials'])
+        http_requests.post('https://oauth2.googleapis.com/revoke',
+            params={'token': credentials.token},
+            headers={'content-type': 'application/x-www-form-urlencoded'})
+
+    # Clear specific session variables first
+    session.pop('user', None)
+    session.pop('credentials', None)
+    session.pop('state', None)
     session.clear()
-    return redirect(url_for('login'))
+    # Force a new session
+    session.modified = True
+    response = make_response(render_template('goodbye.html'))
+    response.headers['Refresh'] = '2; url=' + url_for('login')
+    return response
 
 @app.route('/add', methods=['POST'])
 @login_required
